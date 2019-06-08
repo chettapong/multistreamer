@@ -195,8 +195,8 @@ namespace NantCom.MultiStreamer.Data
                 File.WriteAllText(profilePath, (profile as JObject).ToString());
                 
                 var pi = new ProcessStartInfo();
-                pi.FileName = @"C:\Program Files (x86)\obs-studio\bin\64bit\obs64.exe";
-                pi.WorkingDirectory = @"C:\Program Files (x86)\obs-studio\bin\64bit";
+                pi.FileName = @"C:\Program Files\obs-studio\bin\64bit\obs64.exe";
+                pi.WorkingDirectory = @"C:\Program Files\obs-studio\bin\64bit";
                 Process.Start(pi);
             });
         }
@@ -332,6 +332,7 @@ http {
                 this.SetStatus("Determining Best Twitch Server...", 0, true);
 
                 var bestTwitchServer = await this.GetBestTwitchServer();
+                DotNetSettings.Default.TwitchStreamURL = bestTwitchServer;
                 sb.Replace("%TWITCH%", "push " + bestTwitchServer.Replace("{stream_key}", DotNetSettings.Default.TwitchStreamKey) + ";");
             }
             else
@@ -342,7 +343,7 @@ http {
             if (this.IsTestMode == false && !string.IsNullOrEmpty(DotNetSettings.Default.YouTubeStreamKey))
             {
                 serviceCount++;
-                sb.Replace("%YOUTUBE%", "push rtmp://a.rtmp.youtube.com/live2/" + DotNetSettings.Default.YouTubeStreamKey + ";");
+                sb.Replace("%YOUTUBE%", $"push {Path.Combine(DotNetSettings.Default.YouTubeStreamURL, DotNetSettings.Default.YouTubeStreamKey) };");
             }
             else
             {
@@ -352,7 +353,7 @@ http {
             if (this.IsTestMode == false && !string.IsNullOrEmpty(DotNetSettings.Default.FacebookStreamKey))
             {
                 serviceCount++;
-                sb.Replace("%FACEBOOK%", "push rtmp://live-api.facebook.com:80/rtmp/" + DotNetSettings.Default.FacebookStreamKey + ";");
+                sb.Replace("%FACEBOOK%", $"push { Path.Combine(DotNetSettings.Default.FacebookStreamURL, DotNetSettings.Default.FacebookStreamKey) };");
             }
             else
             {
@@ -490,7 +491,9 @@ http {
                 }
 
 
-                string testTempate = "-i test.mp4 -vf scale=1280:-1 -sws_flags bilinear -vcodec h264_qsv -pix_fmt yuv420p -tune zerolatency -r 30 -g 60 -b:v %FBBITRATE%k -acodec aac -ar 44100 -threads 4 -q:a 3 -b:a 96K -bufsize 512k -f flv out.flv ";
+                string testTempate = "-i test.mp4 -vf scale=%FBSCALE%:-1 -sws_flags bilinear -vcodec h264_qsv -pix_fmt yuv420p -tune zerolatency -r %FBFPS% -g 60 -b:v %FBBITRATE%k -acodec aac -ar 44100 -threads 4 -q:a 3 -b:a 96K -bufsize 512k -f flv out.flv ";
+                testTempate = testTempate.Replace("%FBSCALE%", DotNetSettings.Default.FacebookScale.ToString());
+                testTempate = testTempate.Replace("%FBFPS%", DotNetSettings.Default.FacebookFramesPerSecond.ToString());
                 testTempate = testTempate.Replace("%FBBITRATE%", DotNetSettings.Default.FacebookBitRate.ToString());
 
                 string exitmessage = null;
@@ -527,11 +530,13 @@ http {
 @"
 @echo off
 
-%CURRENTPATH%\ffmpeg-latest-win64-static\bin\ffmpeg -i ""rtmp://localhost/ingest/1"" -vf scale=1280:-1 -sws_flags bilinear -vcodec %VCODEC% -pix_fmt yuv420p -tune zerolatency -r 30 -g 60 -b:v %FBBITRATE%k -acodec aac -ar 44100 -threads 4 -q:a 3 -b:a 96K -bufsize 512k -f flv ""rtmp://localhost/tofacebook/1""
+%CURRENTPATH%\ffmpeg-latest-win64-static\bin\ffmpeg -i ""rtmp://localhost/ingest/1"" -vf scale=%FBSCALE%:-1 -sws_flags bilinear -vcodec %VCODEC% -pix_fmt yuv420p -tune zerolatency -r %FBFPS% -g 60 -b:v %FBBITRATE%k -acodec aac -ar 44100 -threads 4 -q:a 3 -b:a 96K -bufsize 512k -f flv ""rtmp://localhost/tofacebook/1""
 
 pause
 ";
                 runCommmand = runCommmand.Replace("%CURRENTPATH%", this.CurrentFolder);
+                runCommmand = runCommmand.Replace("%FBSCALE%", DotNetSettings.Default.FacebookScale.ToString());
+                runCommmand = runCommmand.Replace("%FBFPS%", DotNetSettings.Default.FacebookFramesPerSecond.ToString());
                 runCommmand = runCommmand.Replace("%FBBITRATE%", DotNetSettings.Default.FacebookBitRate.ToString());
                 runCommmand = runCommmand.Replace("%VCODEC%", this.IsFFMpegUsingQSV ? "h264_qsv" : "libx264");
 
@@ -692,7 +697,7 @@ pause
                     _Default.ListOBSProfiles();
 
                     _Default.Settings.Reload();
-                    _Default.IsTestMode = true;
+                    _Default.IsTestMode = false;
                 }
 
                 return _Default;

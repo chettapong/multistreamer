@@ -22,7 +22,23 @@ namespace NantCom.MultiStreamer.Properties {
                 return defaultInstance;
             }
         }
-        
+
+        #region FacebookStream
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string FacebookStreamURL
+        {
+            get
+            {
+                return ((string)(this["FacebookStreamURL"]));
+            }
+            set
+            {
+                this["FacebookStreamURL"] = value;
+            }
+        }
+
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
@@ -34,19 +50,54 @@ namespace NantCom.MultiStreamer.Properties {
                 this["FacebookStreamKey"] = value;
             }
         }
-        
+        #endregion
+
+        #region TwitchStream
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string TwitchStreamKey {
+        public string TwitchStreamURL
+        {
             get {
-                return ((string)(this["TwitchStreamKey"]));
+                return ((string)(this["TwitchStreamURL"]));
             }
             set {
+                this["TwitchStreamURL"] = value;
+            }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string TwitchStreamKey
+        {
+            get
+            {
+                return ((string)(this["TwitchStreamKey"]));
+            }
+            set
+            {
                 this["TwitchStreamKey"] = value;
             }
         }
-        
+        #endregion
+
+        #region YouTubeStream
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string YouTubeStreamURL
+        {
+            get
+            {
+                return ((string)(this["YouTubeStreamURL"]));
+            }
+            set
+            {
+                this["YouTubeStreamURL"] = value;
+            }
+        }
+
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
@@ -56,6 +107,38 @@ namespace NantCom.MultiStreamer.Properties {
             }
             set {
                 this["YouTubeStreamKey"] = value;
+            }
+        }
+        #endregion
+
+        #region Facebook Setting
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("30")]
+        public int FacebookFramesPerSecond
+        {
+            get
+            {
+                return ((int)(this["FacebookFramesPerSecond"]));
+            }
+            set
+            {
+                this["FacebookFramesPerSecond"] = value;
+            }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1280")]
+        public int FacebookScale
+        {
+            get
+            {
+                return ((int)(this["FacebookScale"]));
+            }
+            set
+            {
+                this["FacebookScale"] = value;
             }
         }
         
@@ -70,7 +153,8 @@ namespace NantCom.MultiStreamer.Properties {
                 this["FacebookBitRate"] = value;
             }
         }
-        
+        #endregion
+
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
